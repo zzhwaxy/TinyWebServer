@@ -11,9 +11,13 @@
 #include <stdlib.h>
 #include <cassert>
 #include <sys/epoll.h>
+#include <fstream>
+#include <iostream>
+#include <string>
 
 #include "./threadpool/threadpool.h"
 #include "./http/http_conn.h"
+#include "config.h"
 
 const int MAX_FD = 65536;           //最大文件描述符
 const int MAX_EVENT_NUMBER = 10000; //最大事件数
@@ -25,9 +29,7 @@ public:
     WebServer();
     ~WebServer();
 
-    void init(int port , string user, string passWord, string databaseName,
-              int log_write , int opt_linger, int trigmode, int sql_num,
-              int thread_num, int close_log, int actor_model);
+  void init(Config config);
 
     void thread_pool();
     void sql_pool();

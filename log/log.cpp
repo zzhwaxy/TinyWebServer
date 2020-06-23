@@ -46,15 +46,15 @@ bool Log::init(const char *file_name, int close_log, int log_buf_size, int split
     const char *p = strrchr(file_name, '/');
     char log_full_name[256] = {0};
 
-    if (p == NULL)
+    if (!p)
     {
-        snprintf(log_full_name, 255, "%d_%02d_%02d_%s", my_tm.tm_year + 1900, my_tm.tm_mon + 1, my_tm.tm_mday, file_name);
+      snprintf(log_full_name, 255, "%s%d_%02d_%02d_%02d:%02d:%02d%s", dir_name, my_tm.tm_year + 1900, my_tm.tm_mon + 1, my_tm.tm_mday,my_tm.tm_hour,my_tm.tm_min,my_tm.tm_sec,log_name);
     }
     else
     {
         strcpy(log_name, p + 1);
         strncpy(dir_name, file_name, p - file_name + 1);
-        snprintf(log_full_name, 255, "%s%d_%02d_%02d_%s", dir_name, my_tm.tm_year + 1900, my_tm.tm_mon + 1, my_tm.tm_mday, log_name);
+        snprintf(log_full_name, 255, "%s%d_%02d_%02d_%02d:%02d:%02d%s", dir_name, my_tm.tm_year + 1900, my_tm.tm_mon + 1, my_tm.tm_mday,my_tm.tm_hour,my_tm.tm_min,my_tm.tm_sec,log_name);
     }
 
     m_today = my_tm.tm_mday;

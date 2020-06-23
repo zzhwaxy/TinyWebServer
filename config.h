@@ -1,8 +1,11 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include "webserver.h"
-
+#include<fstream>
+#include<string>
+#include<iostream>
+#include<unistd.h>
+#include<stdlib.h>
 using namespace std;
 
 class Config
@@ -12,6 +15,8 @@ public:
     ~Config(){};
 
     void parse_arg(int argc, char*argv[]);
+  void parse_file(int argc,char *argv[]);
+  
 
     //端口号
     int PORT;
@@ -42,6 +47,11 @@ public:
 
     //并发模型选择
     int actor_model;
+
+  //需要修改的数据库信息,登录名,密码,库名
+  string user = "root";
+  string passwd = "root";
+  string databasename = "yourdb";
 };
 
 #endif

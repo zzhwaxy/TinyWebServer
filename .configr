@@ -1,0 +1,10 @@
+PORT= 1234
+LOGWrite=0
+TRIGMode=0
+LISTENTrigmode=0
+CONNTrigmode=0
+OPT_LINGER=8
+sql_num=8
+thread_num=0
+close_log=0
+actor_model=0

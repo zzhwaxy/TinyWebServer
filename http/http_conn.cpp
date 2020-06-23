@@ -211,6 +211,7 @@ bool http_conn::read_once()
 
         if (bytes_read <= 0)
         {
+          LOG_ERROR("READ ERROR");
             return false;
         }
 
@@ -281,7 +282,7 @@ http_conn::HTTP_CODE http_conn::parse_request_line(char *text)
         return BAD_REQUEST;
     //当url为/时，显示判断界面
     if (strlen(m_url) == 1)
-        strcat(m_url, "judge.html");
+        strcat(m_url, "index.html");
     m_check_state = CHECK_STATE_HEADER;
     return NO_REQUEST;
 }
@@ -392,6 +393,7 @@ http_conn::HTTP_CODE http_conn::do_request()
     //printf("m_url:%s\n", m_url);
     const char *p = strrchr(m_url, '/');
 
+ 
     //处理cgi
     if (cgi == 1 && (*(p + 1) == '2' || *(p + 1) == '3'))
     {
@@ -423,12 +425,7 @@ http_conn::HTTP_CODE http_conn::do_request()
             //如果是注册，先检测数据库中是否有重名的
             //没有重名的，进行增加数据
             char *sql_insert = (char *)malloc(sizeof(char) * 200);
-            strcpy(sql_insert, "INSERT INTO user(username, passwd) VALUES(");
-            strcat(sql_insert, "'");
-            strcat(sql_insert, name);
-            strcat(sql_insert, "', '");
-            strcat(sql_insert, password);
-            strcat(sql_insert, "')");
+            sprintf(sql_insert,"%s%s%s%s%s%s", "INSERT INTO user(username, passwd) VALUES(", "'",name,"', '",password, "')");
 
             if (users.find(name) == users.end())
             {
@@ -450,55 +447,28 @@ http_conn::HTTP_CODE http_conn::do_request()
         else if (*(p + 1) == '2')
         {
             if (users.find(name) != users.end() && users[name] == password)
-                strcpy(m_url, "/welcome.html");
+                strcpy(m_url, "/login_success.html");
             else
                 strcpy(m_url, "/logError.html");
         }
-    }
-
-    if (*(p + 1) == '0')
-    {
-        char *m_url_real = (char *)malloc(sizeof(char) * 200);
-        strcpy(m_url_real, "/register.html");
-        strncpy(m_real_file + len, m_url_real, strlen(m_url_real));
-
-        free(m_url_real);
-    }
-    else if (*(p + 1) == '1')
-    {
-        char *m_url_real = (char *)malloc(sizeof(char) * 200);
-        strcpy(m_url_real, "/log.html");
-        strncpy(m_real_file + len, m_url_real, strlen(m_url_real));
-
-        free(m_url_real);
-    }
-    else if (*(p + 1) == '5')
-    {
-        char *m_url_real = (char *)malloc(sizeof(char) * 200);
-        strcpy(m_url_real, "/picture.html");
-        strncpy(m_real_file + len, m_url_real, strlen(m_url_real));
-
-        free(m_url_real);
-    }
-    else if (*(p + 1) == '6')
-    {
-        char *m_url_real = (char *)malloc(sizeof(char) * 200);
-        strcpy(m_url_real, "/video.html");
-        strncpy(m_real_file + len, m_url_real, strlen(m_url_real));
-
-        free(m_url_real);
-    }
-    else if (*(p + 1) == '7')
-    {
-        char *m_url_real = (char *)malloc(sizeof(char) * 200);
-        strcpy(m_url_real, "/fans.html");
-        strncpy(m_real_file + len, m_url_real, strlen(m_url_real));
-
-        free(m_url_real);
-    }
-    else
+     }
+     {
+    char c=*(p+1);
+    switch(c)
+      {
+      case '0':
+        sprintf(m_real_file,"%s%s",m_real_file, "/register.html");
+        break;
+      case '1':
+        sprintf(m_real_file,"%s%s",m_real_file, "/log.html");
+        break;
+      case '4':
+        sprintf(m_real_file,"%s%s",m_real_file, "/picture.html");
+        break;
+      default:
         strncpy(m_real_file + len, m_url, FILENAME_LEN - len - 1);
-
+      }
+     }
     if (stat(m_real_file, &m_file_stat) < 0)
         return NO_RESOURCE;
 
